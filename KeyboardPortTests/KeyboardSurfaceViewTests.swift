@@ -3,6 +3,43 @@ import XCTest
 
 @MainActor
 final class KeyboardSurfaceViewTests: XCTestCase {
+  func testPortraitKeyFramesMatchAppleReference() throws {
+    // IMG_3350: 1206px wide at 3x scale. Reference key frames in points.
+    let surface = KeyboardSurfaceView(frame: CGRect(x: 0, y: 0, width: 402, height: 205))
+    surface.overrideUserInterfaceStyle = .light
+    surface.layoutIfNeeded()
+    func frame(_ id: String) throws -> CGRect {
+      let key = try button(id, in: surface)
+      return key.convert(key.bounds, to: surface)
+    }
+    let q = try frame("keyboard-key-q")
+    let a = try frame("keyboard-key-a")
+    let z = try frame("keyboard-key-z")
+    let space = try frame("keyboard-space-key")
+    let enter = try frame("keyboard-return-key")
+    XCTAssertEqual(q.minX, 7, accuracy: 0.5)
+    XCTAssertEqual(q.width, 33.4, accuracy: 0.5)
+    XCTAssertEqual(q.height, 43, accuracy: 0.5)
+    XCTAssertEqual(a.minX, 26.7, accuracy: 0.5)
+    XCTAssertEqual(a.width, q.width, accuracy: 0.5)
+    XCTAssertEqual(a.minY, 54, accuracy: 0.5)
+    XCTAssertEqual(z.minX, 66, accuracy: 0.5)
+    XCTAssertEqual(z.width, q.width, accuracy: 0.5)
+    XCTAssertEqual(space.minX, 105.5, accuracy: 1)
+    XCTAssertEqual(enter.minX, 303, accuracy: 1)
+    XCTAssertEqual(enter.maxX, 395, accuracy: 0.5)
+    XCTAssertNil(findButton("keyboard-key-.", in: surface))
+    let image = UIGraphicsImageRenderer(bounds: surface.bounds).image { context in
+      UIColor(red: 0.89, green: 0.89, blue: 0.91, alpha: 1).setFill()
+      context.fill(surface.bounds)
+      surface.layer.render(in: context.cgContext)
+    }
+    let attachment = XCTAttachment(image: image)
+    attachment.name = "Keyboard portrait reference check"
+    attachment.lifetime = .keepAlways
+    add(attachment)
+  }
+
   func testTypingConsumesSingleShiftAndUsesUppercaseText() throws {
     let (surface, delegate) = makeSurface()
 

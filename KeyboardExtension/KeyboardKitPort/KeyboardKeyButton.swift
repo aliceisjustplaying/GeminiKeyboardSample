@@ -13,7 +13,7 @@ final class KeyboardKeyButton: UIButton {
     isExclusiveTouch = true
     accessibilityTraits.insert(.keyboardKey)
     layer.cornerCurve = .continuous
-    layer.cornerRadius = 6
+    layer.cornerRadius = 9
     layer.shadowColor = UIColor.black.cgColor
     layer.shadowRadius = 0
     layer.shadowOffset = CGSize(width: 0, height: 1)
@@ -36,7 +36,7 @@ final class KeyboardKeyButton: UIButton {
   }
 
   override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-    bounds.insetBy(dx: -2, dy: -3).contains(point)
+    bounds.insetBy(dx: -3, dy: -6).contains(point)
   }
 
   func configure(title: String?, systemImage: String?, accessibilityLabel: String) {
@@ -45,8 +45,9 @@ final class KeyboardKeyButton: UIButton {
     configuration.image = systemImage.flatMap(UIImage.init(systemName:))
     configuration.imagePlacement = .leading
     configuration.imagePadding = 3
+    configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 17, weight: .regular)
     configuration.cornerStyle = .fixed
-    configuration.background.cornerRadius = 6
+    configuration.background.cornerRadius = 9
     configuration.contentInsets = NSDirectionalEdgeInsets(
       top: 2,
       leading: 2,
@@ -57,8 +58,8 @@ final class KeyboardKeyButton: UIButton {
       attributes in
       var transformed = attributes
       transformed[AttributeScopes.UIKitAttributes.FontAttribute.self] = .systemFont(
-        ofSize: self.key.style == .input ? 21 : 14,
-        weight: self.key.style == .accent ? .semibold : .regular
+        ofSize: self.key.style == .input ? 25 : 18,
+        weight: .regular
       )
       return transformed
     }
@@ -75,7 +76,7 @@ final class KeyboardKeyButton: UIButton {
       self.transform = self.isHighlighted
         ? CGAffineTransform(scaleX: 0.96, y: 0.96)
         : .identity
-      self.layer.shadowOpacity = self.isHighlighted ? 0.04 : 0.22
+      self.layer.shadowOpacity = 0
       self.layer.shadowOffset = self.isHighlighted ? .zero : CGSize(width: 0, height: 1)
     }
     if animated {
@@ -106,7 +107,7 @@ final class KeyboardKeyButton: UIButton {
       return UIColor { traits in
         traits.userInterfaceStyle == .dark
           ? UIColor(red: 0.24, green: 0.25, blue: 0.28, alpha: 1)
-          : UIColor(red: 0.67, green: 0.70, blue: 0.74, alpha: 1)
+          : .white
       }
     case .accent:
       return .systemBlue

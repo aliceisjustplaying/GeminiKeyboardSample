@@ -20,11 +20,11 @@ extension KeyboardViewController {
     view.addSubview(rootStack)
 
     NSLayoutConstraint.activate([
-      rootStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 4),
-      rootStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -4),
+      rootStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+      rootStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
       rootStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 5),
       rootStack.bottomAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5),
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0),
     ])
 
     let toolbar = makeToolbar()
@@ -41,14 +41,14 @@ extension KeyboardViewController {
     rootStack.addArrangedSubview(recordingPanel)
     rootStack.addArrangedSubview(typingStack)
 
-    toolbar.heightAnchor.constraint(equalToConstant: 44).isActive = true
+    toolbar.heightAnchor.constraint(equalToConstant: 40).isActive = true
     insertLatestButton.heightAnchor.constraint(equalToConstant: 42).isActive = true
     insertLatestButton.isHidden = true
     recordingPanel.isHidden = true
   }
 
   var preferredKeyboardHeight: CGFloat {
-    let contentHeight: CGFloat = traitCollection.verticalSizeClass == .compact ? 272 : 292
+    let contentHeight: CGFloat = traitCollection.verticalSizeClass == .compact ? 216 : 257
     let resultBannerHeight: CGFloat = insertLatestButton.isHidden ? 0 : 49
     return contentHeight + resultBannerHeight + view.safeAreaInsets.bottom
   }
@@ -64,11 +64,13 @@ extension KeyboardViewController {
     stack.axis = .horizontal
     stack.alignment = .center
     stack.spacing = 7
+    stack.isLayoutMarginsRelativeArrangement = true
+    stack.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 7)
 
     brandMarkView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      brandMarkView.widthAnchor.constraint(equalToConstant: 38),
-      brandMarkView.heightAnchor.constraint(equalToConstant: 38),
+      brandMarkView.widthAnchor.constraint(equalToConstant: 32),
+      brandMarkView.heightAnchor.constraint(equalToConstant: 32),
     ])
     brandMarkView.tapHandler = { [weak self] in
       self?.openContainingAppFromBrandMark()
@@ -182,8 +184,8 @@ extension KeyboardViewController {
     stack.addArrangedSubview(cancelButton)
     for button in [microphoneButton, translateButton, cancelButton] {
       NSLayoutConstraint.activate([
-        button.widthAnchor.constraint(equalToConstant: 44),
-        button.heightAnchor.constraint(equalToConstant: 44),
+        button.widthAnchor.constraint(equalToConstant: 36),
+        button.heightAnchor.constraint(equalToConstant: 36),
       ])
     }
     return stack

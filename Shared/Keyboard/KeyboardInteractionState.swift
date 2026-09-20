@@ -185,7 +185,7 @@ private extension KeyboardInteractionState {
   ) -> [KeyboardLayoutRow] {
     [
       KeyboardLayoutRow(textKeys("qwertyuiop")),
-      KeyboardLayoutRow(textKeys("asdfghjkl"), leadingInset: 0.45, trailingInset: 0.45),
+      KeyboardLayoutRow(textKeys("asdfghjkl"), leadingInset: 0.5, trailingInset: 0.5),
       KeyboardLayoutRow(
         [KeyboardLayoutKey(.shift, width: 1.35, style: .system)]
           + textKeys("zxcvbnm")
@@ -239,6 +239,16 @@ private extension KeyboardInteractionState {
     inputKind: KeyboardInputKind,
     needsInputModeSwitchKey: Bool
   ) -> KeyboardLayoutRow {
+    // Match the reference bottom-row key boundaries. Keep a keyboard-switch
+    // control in the emoji position even when iOS also supplies a globe below.
+    if inputKind == .standard {
+      return KeyboardLayoutRow([
+        KeyboardLayoutKey(.page, width: 44, style: .system),
+        KeyboardLayoutKey(.nextKeyboard, width: 44, style: .system),
+        KeyboardLayoutKey(.space, width: 192),
+        KeyboardLayoutKey(.returnKey, width: 93, style: .system),
+      ])
+    }
     var keys = [KeyboardLayoutKey(.page, width: 1.45, style: .system)]
     if needsInputModeSwitchKey {
       keys.append(KeyboardLayoutKey(.nextKeyboard, width: 1.1, style: .system))

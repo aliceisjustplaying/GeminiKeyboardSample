@@ -69,12 +69,12 @@ final class KeyboardInteractionStateTests: XCTestCase {
         .contains(.space))
   }
 
-  func testNextKeyboardKeyTracksSystemRequirement() {
+  func testStandardLayoutKeepsKeyboardChooserInBottomRow() {
     let state = KeyboardInteractionState()
     XCTAssertTrue(
       actions(in: state.layout(inputKind: .standard, needsInputModeSwitchKey: true))
         .contains(.nextKeyboard))
-    XCTAssertFalse(
+    XCTAssertTrue(
       actions(in: state.layout(inputKind: .standard, needsInputModeSwitchKey: false))
         .contains(.nextKeyboard))
   }

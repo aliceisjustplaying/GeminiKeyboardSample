@@ -40,10 +40,10 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
     rootStack.axis = .vertical
     rootStack.alignment = .fill
     rootStack.distribution = .fillEqually
-    rootStack.spacing = 6
+    rootStack.spacing = 11
     rootStack.translatesAutoresizingMaskIntoConstraints = false
     addSubview(rootStack)
-    let fillWidth = rootStack.widthAnchor.constraint(equalTo: widthAnchor, constant: -8)
+    let fillWidth = rootStack.widthAnchor.constraint(equalTo: widthAnchor, constant: -14)
     // UIInputViewController asks its content for a compressed fitting size before
     // the extension receives its final bounds. The row containers have no
     // intrinsic width, so a 750-priority fill constraint can be discarded during
@@ -52,8 +52,8 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
     // width effectively mandatory.
     fillWidth.priority = UILayoutPriority(999)
     NSLayoutConstraint.activate([
-      rootStack.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 4),
-      rootStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -4),
+      rootStack.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 7),
+      rootStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -7),
       rootStack.centerXAnchor.constraint(equalTo: centerXAnchor),
       rootStack.widthAnchor.constraint(lessThanOrEqualToConstant: 760),
       fillWidth,
@@ -127,7 +127,7 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
 
   private func rebuild() {
     resetTransientState()
-    rootStack.spacing = traitCollection.horizontalSizeClass == .regular ? 8 : 6
+    rootStack.spacing = traitCollection.horizontalSizeClass == .regular ? 8 : 11
     longPressOptions.removeAll()
     rootStack.arrangedSubviews.forEach {
       rootStack.removeArrangedSubview($0)
@@ -151,28 +151,48 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
     stack.translatesAutoresizingMaskIntoConstraints = false
     container.addSubview(stack)
 
-    let unit: CGFloat = traitCollection.horizontalSizeClass == .regular ? 48 : 36
+    // Insets are fractions of a ten-key pitch, not fixed point estimates.
+    // The reference is the user's 402-point iPhone portrait keyboard.
+    let insetFraction = CGFloat(row.leadingInset) / 10
+    let trailingFraction = CGFloat(row.trailingInset) / 10
+    let leading = UILayoutGuide()
+    let trailing = UILayoutGuide()
+    container.addLayoutGuide(leading)
+    container.addLayoutGuide(trailing)
     NSLayoutConstraint.activate([
-      stack.leadingAnchor.constraint(
-        equalTo: container.leadingAnchor,
-        constant: CGFloat(row.leadingInset) * unit
-      ),
-      stack.trailingAnchor.constraint(
-        equalTo: container.trailingAnchor,
-        constant: -CGFloat(row.trailingInset) * unit
-      ),
+      leading.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+      leading.widthAnchor.constraint(equalTo: container.widthAnchor, multiplier: insetFraction,
+                                     constant: insetFraction * 6),
+      trailing.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+      trailing.widthAnchor.constraint(equalTo: container.widthAnchor, multiplier: trailingFraction,
+                                      constant: trailingFraction * 6),
+      leading.topAnchor.constraint(equalTo: container.topAnchor),
+      leading.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+      trailing.topAnchor.constraint(equalTo: container.topAnchor),
+      trailing.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+      stack.leadingAnchor.constraint(equalTo: leading.trailingAnchor),
+      stack.trailingAnchor.constraint(equalTo: trailing.leadingAnchor),
       stack.topAnchor.constraint(equalTo: container.topAnchor),
       stack.bottomAnchor.constraint(equalTo: container.bottomAnchor),
     ])
 
     let buttons = row.keys.map(makeButton)
     buttons.forEach(stack.addArrangedSubview)
-    if let first = buttons.first, let firstKey = row.keys.first {
+    // The third alphabet row has wider gaps beside Shift and Delete. Its
+    // seven letter keys keep the same width and pitch as the other rows.
+    let isThirdLetterRow = interactionState.page == .letters && row.keys.first?.action == .shift
+    if isThirdLetterRow, buttons.count == 9 {
+      stack.setCustomSpacing(14, after: buttons[0])
+      stack.setCustomSpacing(14, after: buttons[7])
+      for button in buttons[1...7] {
+        button.widthAnchor.constraint(equalTo: container.widthAnchor, multiplier: 0.1,
+                                      constant: -5.4).isActive = true
+      }
+      buttons[0].widthAnchor.constraint(equalTo: buttons[8].widthAnchor).isActive = true
+    } else if let first = buttons.first, let firstKey = row.keys.first {
       for (button, key) in zip(buttons.dropFirst(), row.keys.dropFirst()) {
-        button.widthAnchor.constraint(
-          equalTo: first.widthAnchor,
-          multiplier: CGFloat(key.width / firstKey.width)
-        ).isActive = true
+        button.widthAnchor.constraint(equalTo: first.widthAnchor,
+                                      multiplier: CGFloat(key.width / firstKey.width)).isActive = true
       }
     }
     return container
@@ -396,7 +416,7 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
     case .nextKeyboard:
       return (nil, "globe", "Next keyboard", "keyboard-next-keyboard-key")
     case .space:
-      return ("space", nil, "Space", "keyboard-space-key")
+      return (nil, nil, "Space", "keyboard-space-key")
     case .returnKey:
       let title = returnKeyTitle
       return (title, title == nil ? "return" : nil, title ?? "Return", "keyboard-return-key")

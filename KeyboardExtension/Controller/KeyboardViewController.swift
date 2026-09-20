@@ -133,7 +133,7 @@ final class KeyboardViewController: UIInputViewController, UIInputViewAudioFeedb
   static let keyboardBackgroundColor = UIColor { traits in
     traits.userInterfaceStyle == .dark
       ? UIColor(red: 0.12, green: 0.13, blue: 0.15, alpha: 1)
-      : UIColor(red: 0.82, green: 0.84, blue: 0.87, alpha: 1)
+      : UIColor(red: 0.89, green: 0.89, blue: 0.91, alpha: 1)
   }
 
   static let keyForegroundColor = UIColor { traits in
