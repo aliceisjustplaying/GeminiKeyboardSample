@@ -24,7 +24,7 @@ extension KeyboardViewController {
     lowercaseButton.configuration = configuration
     lowercaseButton.accessibilityLabel = "Lowercase dictation"
     lowercaseButton.accessibilityValue = enabled ? "On" : "Off"
-    lowercaseButton.accessibilityHint = "Lowercases all dictated text when inserted, including names and acronyms. Tap to toggle."
+    lowercaseButton.accessibilityHint = "Lowercases all dictated text and removes trailing periods when inserted. Tap to toggle."
     lowercaseButton.accessibilityIdentifier = "keyboard-lowercase-button"
     lowercaseButton.accessibilityTraits = enabled ? [.button, .selected] : [.button]
   }

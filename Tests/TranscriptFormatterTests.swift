@@ -15,7 +15,32 @@ final class TranscriptFormatterTests: XCTestCase {
     XCTAssertEqual(TranscriptFormatter.textForInsertion("  ", contextBefore: "Hello", lowercase: true), "")
   }
 
+  func testLowercaseDropsFinalPeriodsOnly() {
+    let examples = [
+      ("Hello. Goodbye.  ", "hello. goodbye"),
+      ("It costs 3.14.", "it costs 3.14"),
+      ("Really?", "really?"),
+      ("Great!", "great!"),
+      ("Wait...", "wait"),
+      (".", ""),
+    ]
+    for (input, expected) in examples {
+      XCTAssertEqual(
+        TranscriptFormatter.textForInsertion(input, contextBefore: nil, lowercase: true),
+        expected
+      )
+    }
+    XCTAssertEqual(
+      TranscriptFormatter.textForInsertion("Hello.", contextBefore: nil), "Hello."
+    )
+    XCTAssertEqual(
+      TranscriptFormatter.textForInsertion("Hello.", contextBefore: "Existing", lowercase: true),
+      " hello"
+    )
+  }
+
   func testTranslationCleanerUnwrapsKnownJSONEnvelopesOnly() {
+
     XCTAssertEqual(
       TranscriptFormatter.cleanedTranslation("{\"source_Text\":\"Hello\"}"),
       "Hello"

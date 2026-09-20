@@ -49,7 +49,13 @@ enum TranscriptFormatter {
     _ transcript: String, contextBefore: String?, lowercase: Bool = false
   ) -> String {
     let original = cleaned(transcript)
-    let cleanedTranscript = lowercase ? original.lowercased() : original
+    var cleanedTranscript = lowercase ? original.lowercased() : original
+    if lowercase {
+      while cleanedTranscript.last == "." {
+        cleanedTranscript.removeLast()
+      }
+      cleanedTranscript = cleanedTranscript.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
     guard !cleanedTranscript.isEmpty,
       let last = contextBefore?.last,
       !last.isWhitespace,
