@@ -176,6 +176,33 @@ final class GeminiTranscriptionClientTests: XCTestCase {
     XCTAssertEqual(result, "Testing one two.")
   }
 
+  func testCustomVocabularyIsIncludedInBatchRequestAndEmptyListIsOmitted() async throws {
+    let configuration = URLSessionConfiguration.ephemeral
+    configuration.protocolClasses = [MockURLProtocol.self]
+    let client = GeminiTranscriptionClient(session: URLSession(configuration: configuration))
+    for terms in [["Voxbench", "Tamás Kádár"], []] {
+      MockURLProtocol.handler = { request in
+        let data = try XCTUnwrap(requestBodyData(request))
+        let body = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let generation = try XCTUnwrap(body["generation_config"] as? [String: Any])
+        let transcription = try XCTUnwrap(generation["transcription_config"] as? [String: Any])
+        if terms.isEmpty {
+          XCTAssertNil(transcription["custom_vocabulary"])
+        } else {
+          XCTAssertEqual(transcription["custom_vocabulary"] as? [String], terms)
+        }
+        XCTAssertEqual(transcription["mode"] as? String, "smart")
+        let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+        return (response, Data("{\"steps\":[{\"type\":\"model_output\",\"content\":[{\"type\":\"text\",\"text\":\"Voxbench\"}]}]}".utf8))
+      }
+      let result = try await client.transcribe(
+        audioData: Data([0, 1]), apiKey: "test-key", model: "gemini-3.5-transcribe",
+        customVocabulary: terms
+      )
+      XCTAssertEqual(result, "Voxbench")
+    }
+  }
+
   func testPreCancelledTranscriptionDoesNotStartNetworkLoading() async {
     let configuration = URLSessionConfiguration.ephemeral
     configuration.protocolClasses = [MockURLProtocol.self]

@@ -228,6 +228,20 @@ final class GeminiLiveSpeechSessionTests: XCTestCase {
     await session.cancel()
   }
 
+  func testConnectSendsCustomVocabularyToSocket() async throws {
+    let socket = MockGeminiLiveSocket()
+    let session = GeminiLiveSpeechSession(
+      mode: .transcribe, customVocabulary: ["Voxbench"], socketFactory: { _ in socket }
+    )
+    try await socket.enqueueJSONObject(["setupComplete": [:]])
+    try await session.connect(credential: .apiKey("test-key"))
+    let messages = try await socket.sentJSONObjects()
+    let setup = try XCTUnwrap(messages.first?["setup"] as? [String: Any])
+    let transcription = try XCTUnwrap(setup["inputAudioTranscription"] as? [String: Any])
+    XCTAssertEqual(transcription["customVocabulary"] as? [String], ["Voxbench"])
+    await session.cancel()
+  }
+
   func testParserReadsIncrementalAndFinalServerEvents() throws {
     let data = Data(
       """

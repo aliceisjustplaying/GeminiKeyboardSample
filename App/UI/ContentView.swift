@@ -26,6 +26,7 @@ struct ContentView: View {
           ocrCard
           setupCard
           settingsCard
+          VocabularySettingsView(configuration: configuration)
           savedRecordingsCard
           recentCard
           privacyFooter

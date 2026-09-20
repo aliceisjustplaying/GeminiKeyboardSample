@@ -196,7 +196,8 @@ extension RelayController {
               from: segment,
               action: action,
               translationTarget: translationTarget,
-              apiKey: apiKey
+              apiKey: apiKey,
+              customVocabulary: liveSession.customVocabulary
             )
             usedLiveStream = false
           }
@@ -287,14 +288,16 @@ extension RelayController {
     from segment: CapturedAudioSegment,
     action: RelayDictationAction,
     translationTarget: TranslationLanguage,
-    apiKey: String
+    apiKey: String,
+    customVocabulary: [String]? = nil
   ) async throws -> String {
     try Task.checkCancellation()
     return try await fallbackResult(
       from: segment.url,
       action: action,
       translationTarget: translationTarget,
-      apiKey: apiKey
+      apiKey: apiKey,
+      customVocabulary: customVocabulary
     )
   }
 
@@ -302,7 +305,8 @@ extension RelayController {
     from segmentURL: URL,
     action: RelayDictationAction,
     translationTarget: TranslationLanguage,
-    apiKey: String
+    apiKey: String,
+    customVocabulary: [String]? = nil
   ) async throws -> String {
     try Task.checkCancellation()
     let audioData = try await Task.detached(priority: .userInitiated) {
@@ -312,7 +316,8 @@ extension RelayController {
     let sourceText = try await client.transcribe(
       audioData: audioData,
       apiKey: apiKey,
-      model: configuration.transcriptionModel
+      model: configuration.transcriptionModel,
+      customVocabulary: customVocabulary ?? configuration.customVocabulary
     )
     guard action == .translate else { return sourceText }
     return try await client.translate(

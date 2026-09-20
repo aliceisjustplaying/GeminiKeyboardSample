@@ -54,6 +54,7 @@ extension RelayController {
     )
     let liveSession = GeminiLiveSpeechSession(
       mode: mode,
+      customVocabulary: configuration.customVocabulary,
       progressHandler: { [weak self] text in
         Task { @MainActor [weak self] in
           self?.publishLivePreview(

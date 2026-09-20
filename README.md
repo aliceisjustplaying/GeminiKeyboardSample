@@ -13,6 +13,14 @@ An end-to-end iOS sample for Gemini 3.5 Live transcription and spoken translatio
 - Safe Finish, Cancel, fallback, recovery, and insertion into the original text field.
 - A project-local typing surface adapted from KeyboardKit, with no runtime library dependency.
 
+## Custom vocabulary (this fork)
+
+Open **Custom vocabulary** in the Gemini Voice app. Add one word or phrase per line, then tap **Save**. Edit or remove lines to change the list; save an empty list to clear it. **Cancel** discards edits.
+
+Your list stays saved on this phone. The app sends it to Google to help recognize your words when you dictate. Changes apply to the next recording. If the app automatically retries a failed dictation, it keeps the list that recording started with. Retrying from Saved recordings uses your latest saved list. The live Translate feature does not use these hints. Hints guide recognition; they do not force exact replacements.
+
+Blank lines and exact duplicates are ignored. The editor supports up to 1,000 unique terms and blocks saving above that limit. Google recommends a focused list of up to 100 terms for best results. See Google's [Live vocabulary documentation](https://ai.google.dev/gemini-api/docs/live-api/live-transcribe#custom-vocabulary-biasing) and [batch vocabulary documentation](https://ai.google.dev/gemini-api/docs/transcribe#custom-vocabulary).
+
 ## Model routing
 
 The keyboard voice buttons always start a Gemini Live session. There is no batch-mode toggle.

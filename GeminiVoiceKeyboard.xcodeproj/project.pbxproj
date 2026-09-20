@@ -41,6 +41,7 @@
 		32532443DC33A8F3628847BB /* KeyboardInteractionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0CCAC79AAEBEC786A0F8953 /* KeyboardInteractionState.swift */; };
 		36768458F3847799675146EB /* VoiceRelayLiveActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC091768A6E8536E20B8091F /* VoiceRelayLiveActivityController.swift */; };
 		373DE81DDD5D158E0DA7DFD9 /* RelayTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A597CC831BEEA852803C28 /* RelayTypes.swift */; };
+		4186A227F6DE8999EE5B1832 /* VocabularySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BB0D793F7D9EB8A3A5D60A /* VocabularySettingsView.swift */; };
 		4320D50A6BDCB7220B88AAA3 /* RelayController+OCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF13AF39415C9D0EDA58A84 /* RelayController+OCR.swift */; };
 		453038DA606174909A237291 /* GeminiVoiceKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5F06A35D82716D9FEDD8B47A /* GeminiVoiceKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4B12F27AF4ACB6891BB745D9 /* GeminiCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DB2F68FE7A362E6384E9D5 /* GeminiCredentialStore.swift */; };
@@ -55,6 +56,7 @@
 		5F644235A43748A906EDACE5 /* ContentView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5FADD865F082BE2ABD2A8 /* ContentView+Helpers.swift */; };
 		5FD2F450FB4AADB13FD0654E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 106A836CF2F83094CF5445EF /* PrivacyInfo.xcprivacy */; };
 		600861AE60C73C0AA6997CBF /* RelayLaunchRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A485089857649EBB01DA /* RelayLaunchRequest.swift */; };
+		601E8AB18AC71111B54981CD /* CustomVocabulary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07304E658F0BB2A0C6604E3E /* CustomVocabulary.swift */; };
 		64E21E4C78698BD9882D7290 /* AudioCaptureEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C940284BA8B268E2282F2C /* AudioCaptureEngine.swift */; };
 		6969E24601BACC67482F8401 /* LiveWaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C646C5D05D8DE61511D26F3 /* LiveWaveformView.swift */; };
 		6ACE7BB879A4FC5EE8CFD17A /* GeminiLiveSpeechSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3106A978525154EE1080C79 /* GeminiLiveSpeechSessionTests.swift */; };
@@ -100,6 +102,7 @@
 		E25225D30E4365D7112B02BB /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 9DD822CD3AB5043CBD3ECCC3 /* README.md */; };
 		E277099D7728EB9155E9E615 /* KeyboardViewController+RelayState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083904E31DFB659C0AE41051 /* KeyboardViewController+RelayState.swift */; };
 		E8098EE993C666DC88181A07 /* ContentView+Handoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BF8722DB584AEC8F816E86 /* ContentView+Handoff.swift */; };
+		EA1E1E270B9933987316A394 /* CustomVocabularyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5A31E4B27BAF0718F00419 /* CustomVocabularyTests.swift */; };
 		EDAC8A96AC3BCF2650E46053 /* RelayController+Publishing.swift in Sources */ = {isa = PBXBuildFile; fileRef = C882A84573B4EE52BEE17F84 /* RelayController+Publishing.swift */; };
 		F14471C0AB87DBBE81EB24FE /* KeyboardInteractionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0CCAC79AAEBEC786A0F8953 /* KeyboardInteractionState.swift */; };
 		FA38DA1E2F7807BA8FD21BDA /* VoiceRelayActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA879BC09C4F172908B1E5 /* VoiceRelayActivityAttributes.swift */; };
@@ -157,6 +160,7 @@
 		04D13B064CE317C7AABCD1E9 /* KeyboardViewController+HostResolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyboardViewController+HostResolution.swift"; sourceTree = "<group>"; };
 		05A7C2DEE3F4764876B9AEF3 /* ContentView+Overview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+Overview.swift"; sourceTree = "<group>"; };
 		05DB2F68FE7A362E6384E9D5 /* GeminiCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiCredentialStore.swift; sourceTree = "<group>"; };
+		07304E658F0BB2A0C6604E3E /* CustomVocabulary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVocabulary.swift; sourceTree = "<group>"; };
 		07552F40DFDCB06AC84529FC /* RelayController+HostReturn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RelayController+HostReturn.swift"; sourceTree = "<group>"; };
 		083904E31DFB659C0AE41051 /* KeyboardViewController+RelayState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyboardViewController+RelayState.swift"; sourceTree = "<group>"; };
 		08CC85B83972CB81AE5E19B7 /* KeyboardBrandMarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardBrandMarkView.swift; sourceTree = "<group>"; };
@@ -191,6 +195,7 @@
 		4BA54D2F91F81DB6ABCFDB8A /* TranscriptFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptFormatterTests.swift; sourceTree = "<group>"; };
 		4DFADE514ADFB1739650FAB7 /* OCRButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRButtonStyle.swift; sourceTree = "<group>"; };
 		515B88484F85DA78A2A2FE7F /* TranscriptFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptFormatter.swift; sourceTree = "<group>"; };
+		52BB0D793F7D9EB8A3A5D60A /* VocabularySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularySettingsView.swift; sourceTree = "<group>"; };
 		5348BD2E1D3D19A0618490E7 /* AudioCaptureModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCaptureModels.swift; sourceTree = "<group>"; };
 		57CEA481BD7EB7B1C36FBE9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		58585FBDF200E12406B8CA17 /* AudioCaptureEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCaptureEngineTests.swift; sourceTree = "<group>"; };
@@ -204,6 +209,7 @@
 		6D17A940AC709C1F0AC15C3E /* RecoverableRecordingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoverableRecordingStore.swift; sourceTree = "<group>"; };
 		6F0AED7C4B84B46EA898F5B4 /* RelayIdleShutdownPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayIdleShutdownPolicyTests.swift; sourceTree = "<group>"; };
 		76E89338D22B8EE0381E6035 /* KeyboardViewController+Presentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyboardViewController+Presentation.swift"; sourceTree = "<group>"; };
+		7A5A31E4B27BAF0718F00419 /* CustomVocabularyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVocabularyTests.swift; sourceTree = "<group>"; };
 		7AA5A02DE7258AB55AE0A9EE /* GeminiLiveTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLiveTimeout.swift; sourceTree = "<group>"; };
 		7CD6ECA8CEA30AE0C4E21B82 /* GeminiVoiceKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GeminiVoiceKeyboard.entitlements; sourceTree = "<group>"; };
 		7E0E0C9BA8AE993B68B0614F /* GeminiVoiceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiVoiceUITests.swift; sourceTree = "<group>"; };
@@ -431,6 +437,7 @@
 			isa = PBXGroup;
 			children = (
 				58585FBDF200E12406B8CA17 /* AudioCaptureEngineTests.swift */,
+				7A5A31E4B27BAF0718F00419 /* CustomVocabularyTests.swift */,
 				F3106A978525154EE1080C79 /* GeminiLiveSpeechSessionTests.swift */,
 				4A69F7221DF51EF0C0626206 /* GeminiTranscriptionClientTests.swift */,
 				E9087936CFF75AC72E7C914E /* KeyboardInteractionStateTests.swift */,
@@ -530,6 +537,7 @@
 			isa = PBXGroup;
 			children = (
 				9A9B051804088502709840CC /* AppConfiguration.swift */,
+				07304E658F0BB2A0C6604E3E /* CustomVocabulary.swift */,
 				05DB2F68FE7A362E6384E9D5 /* GeminiCredentialStore.swift */,
 				5CF6BC1062BAA9732BD376FB /* GeminiVoiceApp.swift */,
 				95BD5099BCB9A27DEA703E94 /* OpenGeminiVoiceIntent.swift */,
@@ -549,6 +557,7 @@
 				3F1517E25DE9CE5F392E5CEB /* ContentView+Setup.swift */,
 				8C87E25E9B8458D535AD9D6E /* ImagePicker.swift */,
 				4DFADE514ADFB1739650FAB7 /* OCRButtonStyle.swift */,
+				52BB0D793F7D9EB8A3A5D60A /* VocabularySettingsView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -770,6 +779,7 @@
 				AEDA87A9DCB0E940549AA2DA /* ContentView+Settings.swift in Sources */,
 				FFF8A8BA3E805BF56933F995 /* ContentView+Setup.swift in Sources */,
 				5560D83BDFD9BB77285A9217 /* ContentView.swift in Sources */,
+				601E8AB18AC71111B54981CD /* CustomVocabulary.swift in Sources */,
 				4B12F27AF4ACB6891BB745D9 /* GeminiCredentialStore.swift in Sources */,
 				1DC1F03382C6A4D9169EA484 /* GeminiInteractionResponse.swift in Sources */,
 				9005FF50E485C9F295168809 /* GeminiLiveProtocol.swift in Sources */,
@@ -801,6 +811,7 @@
 				A7B9111AD0A39AA6C53DAAB0 /* TranscriptFormatter.swift in Sources */,
 				298F0D1448AD04FBA77D88F0 /* TranscriptHistoryStore.swift in Sources */,
 				70EFD71F8D86397F2B923141 /* TranslationLanguage.swift in Sources */,
+				4186A227F6DE8999EE5B1832 /* VocabularySettingsView.swift in Sources */,
 				FA38DA1E2F7807BA8FD21BDA /* VoiceRelayActivityAttributes.swift in Sources */,
 				36768458F3847799675146EB /* VoiceRelayLiveActivityController.swift in Sources */,
 			);
@@ -874,6 +885,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				97B62DC86C92C06B7EB28C68 /* AudioCaptureEngineTests.swift in Sources */,
+				EA1E1E270B9933987316A394 /* CustomVocabularyTests.swift in Sources */,
 				6ACE7BB879A4FC5EE8CFD17A /* GeminiLiveSpeechSessionTests.swift in Sources */,
 				5752C7AEC51337DBBE81D4C1 /* GeminiTranscriptionClientTests.swift in Sources */,
 				1925B8CBE3B53B24F9500A85 /* KeyboardInteractionStateTests.swift in Sources */,

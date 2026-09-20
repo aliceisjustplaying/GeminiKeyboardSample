@@ -31,6 +31,7 @@ actor GeminiLiveSpeechSession {
   }
 
   let mode: Mode
+  nonisolated let customVocabulary: [String]
   let progressHandler: (@Sendable (String) -> Void)?
   let socketFactory: SocketFactory
   nonisolated let audioStream: AsyncStream<Data>
@@ -58,6 +59,7 @@ actor GeminiLiveSpeechSession {
 
   init(
     mode: Mode,
+    customVocabulary: [String] = [],
     socketFactory: @escaping SocketFactory = { endpoint in
       URLSessionGeminiLiveSocket(endpoint: endpoint)
     },
@@ -67,6 +69,7 @@ actor GeminiLiveSpeechSession {
       bufferingPolicy: .bufferingNewest(500)
     )
     self.mode = mode
+    self.customVocabulary = customVocabulary
     self.socketFactory = socketFactory
     self.progressHandler = progressHandler
     self.audioStream = streamPair.stream
@@ -94,7 +97,7 @@ actor GeminiLiveSpeechSession {
     }
 
     do {
-      try await send(Self.setupMessage(for: mode), over: socket)
+      try await send(Self.setupMessage(for: mode, customVocabulary: customVocabulary), over: socket)
       for _ in 0..<50 {
         try Task.checkCancellation()
         if let terminalError { throw terminalError }

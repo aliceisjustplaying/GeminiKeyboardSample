@@ -4,6 +4,7 @@ import Foundation
 @MainActor
 final class AppConfiguration: ObservableObject {
   private enum Key {
+    static let customVocabulary = "configuration.custom-vocabulary"
     static let apiKeyOverride = "configuration.gemini-api-key-override"
     static let translationTargetCode = TranslationPreferenceKey.targetCode
   }
@@ -34,6 +35,17 @@ final class AppConfiguration: ObservableObject {
 
   @Published private(set) var credentialPersistenceWarning: String?
 
+  @Published private(set) var customVocabulary: [String]
+
+  @discardableResult
+  func saveCustomVocabulary(_ text: String) -> Bool {
+    let terms = CustomVocabulary.parse(text)
+    guard terms.count <= CustomVocabulary.maximumTerms else { return false }
+    customVocabulary = terms
+    defaults.set(terms, forKey: Key.customVocabulary)
+    return true
+  }
+
   @Published var translationTargetCode: String {
     didSet {
       let resolved = TranslationLanguage.language(for: translationTargetCode)
@@ -53,6 +65,7 @@ final class AppConfiguration: ObservableObject {
   ) {
     let sharedDefaults = UserDefaults(suiteName: VoiceAppGroup.identifier) ?? defaults
     self.defaults = defaults
+    self.customVocabulary = defaults.stringArray(forKey: Key.customVocabulary) ?? []
     self.sharedDefaults = sharedDefaults
     self.credentialStore = credentialStore
     self.embeddedAPIKey =

@@ -26,9 +26,13 @@ extension GeminiLiveSpeechSession {
     return GeminiLiveEndpoint(url: url, headers: headers)
   }
 
-  static func setupMessage(for mode: Mode) -> [String: Any] {
+  static func setupMessage(for mode: Mode, customVocabulary: [String] = []) -> [String: Any] {
     switch mode {
     case .transcribe:
+      var transcription: [String: Any] = ["languageCodes": [String](), "mode": "SMART"]
+      if !customVocabulary.isEmpty {
+        transcription["customVocabulary"] = customVocabulary
+      }
       return [
         "setup": [
           "model": "models/\(transcriptionModel)",
@@ -38,10 +42,7 @@ extension GeminiLiveSpeechSession {
           "realtimeInputConfig": [
             "automaticActivityDetection": ["disabled": true]
           ],
-          "inputAudioTranscription": [
-            "languageCodes": [],
-            "mode": "SMART",
-          ],
+          "inputAudioTranscription": transcription,
         ]
       ]
     case .translate(let targetLanguageCode):

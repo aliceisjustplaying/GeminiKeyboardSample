@@ -34,7 +34,8 @@ struct GeminiTranscriptionClient {
     audioData: Data,
     mimeType: String = "audio/wav",
     apiKey: String,
-    model: String
+    model: String,
+    customVocabulary: [String] = []
   ) async throws -> String {
     try Task.checkCancellation()
     let trimmedKey = try validatedAPIKey(apiKey)
@@ -42,6 +43,10 @@ struct GeminiTranscriptionClient {
       throw GeminiTranscriptionError.audioTooLarge(bytes: audioData.count)
     }
 
+    var transcriptionConfig: [String: Any] = ["mode": "smart"]
+    if !customVocabulary.isEmpty {
+      transcriptionConfig["custom_vocabulary"] = customVocabulary
+    }
     let body: [String: Any] = [
       "model": model,
       "store": false,
@@ -53,9 +58,7 @@ struct GeminiTranscriptionClient {
         ]
       ],
       "generation_config": [
-        "transcription_config": [
-          "mode": "smart"
-        ]
+        "transcription_config": transcriptionConfig
       ],
     ]
 
