@@ -45,8 +45,11 @@ enum TranscriptFormatter {
     return cleaned(wrappedText)
   }
 
-  static func textForInsertion(_ transcript: String, contextBefore: String?) -> String {
-    let cleanedTranscript = cleaned(transcript)
+  static func textForInsertion(
+    _ transcript: String, contextBefore: String?, lowercase: Bool = false
+  ) -> String {
+    let original = cleaned(transcript)
+    let cleanedTranscript = lowercase ? original.lowercased() : original
     guard !cleanedTranscript.isEmpty,
       let last = contextBefore?.last,
       !last.isWhitespace,

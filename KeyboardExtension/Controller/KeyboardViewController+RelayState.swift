@@ -428,10 +428,11 @@ extension KeyboardViewController {
     }
   }
 
-  func insertTranscript(_ transcript: String) {
+  func insertTranscript(_ transcript: String, kind: RelayResultKind = .dictation) {
     let insertion = TranscriptFormatter.textForInsertion(
       transcript,
-      contextBefore: textDocumentProxy.documentContextBeforeInput
+      contextBefore: textDocumentProxy.documentContextBeforeInput,
+      lowercase: lowercaseDictation && kind == .dictation
     )
     guard !insertion.isEmpty else { return }
     textDocumentProxy.insertText(insertion)

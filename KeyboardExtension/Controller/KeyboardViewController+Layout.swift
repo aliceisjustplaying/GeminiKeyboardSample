@@ -179,10 +179,15 @@ extension KeyboardViewController {
     insertLatestButton.isHidden = true
     prepareActionButton(insertLatestButton)
 
+    configureLowercaseButton()
+    lowercaseButton.addTarget(self, action: #selector(lowercaseTapped), for: .touchUpInside)
+    prepareActionButton(lowercaseButton)
+    stack.addArrangedSubview(lowercaseButton)
     stack.addArrangedSubview(microphoneButton)
+
     stack.addArrangedSubview(translateButton)
     stack.addArrangedSubview(cancelButton)
-    for button in [microphoneButton, translateButton, cancelButton] {
+    for button in [lowercaseButton, microphoneButton, translateButton, cancelButton] {
       NSLayoutConstraint.activate([
         button.widthAnchor.constraint(equalToConstant: 36),
         button.heightAnchor.constraint(equalToConstant: 36),

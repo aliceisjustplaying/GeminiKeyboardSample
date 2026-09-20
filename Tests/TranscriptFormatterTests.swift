@@ -3,6 +3,18 @@ import XCTest
 @testable import GeminiVoice
 
 final class TranscriptFormatterTests: XCTestCase {
+  func testLowercaseInsertionIncludesNamesAcronymsAndUnicodeWithoutChangingPunctuation() {
+    XCTAssertEqual(
+      TranscriptFormatter.textForInsertion("Transcript: I met Tamás at NASA!", contextBefore: "Hello", lowercase: true),
+      " i met tamás at nasa!"
+    )
+    XCTAssertEqual(
+      TranscriptFormatter.textForInsertion("I met Tamás at NASA!", contextBefore: nil, lowercase: false),
+      "I met Tamás at NASA!"
+    )
+    XCTAssertEqual(TranscriptFormatter.textForInsertion("  ", contextBefore: "Hello", lowercase: true), "")
+  }
+
   func testTranslationCleanerUnwrapsKnownJSONEnvelopesOnly() {
     XCTAssertEqual(
       TranscriptFormatter.cleanedTranslation("{\"source_Text\":\"Hello\"}"),

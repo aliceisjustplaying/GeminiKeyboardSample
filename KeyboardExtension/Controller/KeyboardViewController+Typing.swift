@@ -3,6 +3,32 @@ import Darwin
 import UIKit
 
 extension KeyboardViewController {
+  var lowercaseDictation: Bool {
+    UserDefaults.standard.bool(forKey: LocalKey.lowercaseDictation)
+  }
+
+  @objc func lowercaseTapped() {
+    UserDefaults.standard.set(!lowercaseDictation, forKey: LocalKey.lowercaseDictation)
+    configureLowercaseButton()
+    UISelectionFeedbackGenerator().selectionChanged()
+  }
+
+  func configureLowercaseButton() {
+    let enabled = lowercaseDictation
+    var configuration = UIButton.Configuration.filled()
+    configuration.title = "abc"
+    configuration.cornerStyle = .capsule
+    configuration.contentInsets = .zero
+    configuration.baseBackgroundColor = enabled ? .systemBlue : .tertiarySystemFill
+    configuration.baseForegroundColor = enabled ? .white : Self.keyForegroundColor
+    lowercaseButton.configuration = configuration
+    lowercaseButton.accessibilityLabel = "Lowercase dictation"
+    lowercaseButton.accessibilityValue = enabled ? "On" : "Off"
+    lowercaseButton.accessibilityHint = "Lowercases all dictated text when inserted, including names and acronyms. Tap to toggle."
+    lowercaseButton.accessibilityIdentifier = "keyboard-lowercase-button"
+    lowercaseButton.accessibilityTraits = enabled ? [.button, .selected] : [.button]
+  }
+
   @objc func cancelTapped() {
     guard let activeRequestID,
       let activeDictationAction
@@ -38,7 +64,7 @@ extension KeyboardViewController {
 
   @objc func insertLatestTapped() {
     guard let pendingTranscript else { return }
-    insertTranscript(pendingTranscript)
+    insertTranscript(pendingTranscript, kind: pendingResultKind ?? .dictation)
     self.pendingTranscript = nil
     if let pendingResultSequence {
       markResultConsumed(sequence: pendingResultSequence)

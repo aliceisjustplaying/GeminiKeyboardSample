@@ -4,6 +4,7 @@ import UIKit
 
 final class KeyboardViewController: UIInputViewController, UIInputViewAudioFeedback {
   enum LocalKey {
+    static let lowercaseDictation = "keyboard.lowercase-dictation"
     static let consumedResultSequence = "keyboard.consumed-result-sequence"
     static let activeRequestID = "keyboard.active-request-id"
     static let activeRequestAction = "keyboard.active-request-action"
@@ -67,6 +68,7 @@ final class KeyboardViewController: UIInputViewController, UIInputViewAudioFeedb
   let processingIndicator = UIActivityIndicatorView(style: .medium)
   let processingLabel = UILabel()
   let timerLabel = UILabel()
+  let lowercaseButton = KeyboardButton(type: .system)
   let microphoneButton = KeyboardButton(type: .system)
   let translateButton = KeyboardButton(type: .system)
   let cancelButton = KeyboardButton(type: .system)
