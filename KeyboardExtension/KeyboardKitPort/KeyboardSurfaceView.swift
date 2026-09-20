@@ -24,6 +24,7 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
   private(set) var needsInputModeSwitchKey = true
   private(set) var returnKeyType: UIReturnKeyType = .default
 
+  private var keyButtons: [KeyboardKeyButton] = []
   private let rootStack = UIStackView()
   private let inputCallout = KeyboardInputCalloutView()
   private let alternateCallout = KeyboardAlternateCalloutView()
@@ -91,7 +92,7 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
     let previous = interactionState.capitalization
     interactionState.applyAutomaticCapitalization(capitalization)
     if interactionState.capitalization != previous {
-      rebuild()
+      refreshLetterCase()
     }
   }
 
@@ -108,8 +109,9 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
       insertText(text)
     case .shift:
       delegate?.keyboardSurfacePlayInputClick(self)
+      let previousPage = interactionState.page
       interactionState.tapShift(at: ProcessInfo.processInfo.systemUptime)
-      rebuild()
+      if previousPage == interactionState.page { refreshLetterCase() } else { rebuild() }
     case .page:
       delegate?.keyboardSurfacePlayInputClick(self)
       interactionState.tapPage()
@@ -125,9 +127,40 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
     }
   }
 
+  // Stack-view row containers otherwise swallow touches in the vertical gaps,
+  // even though the keys themselves have expanded hit regions.
+  override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    guard isUserInteractionEnabled, !isHidden, alpha > 0.01, bounds.contains(point) else {
+      return nil
+    }
+    let hit = super.hitTest(point, with: event)
+    if hit is KeyboardKeyButton { return hit }
+    return keyButtons.first {
+      $0.isEnabled && $0.point(inside: $0.convert(point, from: self), with: event)
+    } ?? hit
+  }
+
+  private func refreshLetterCase() {
+    guard interactionState.page == .letters else { return }
+    for button in keyButtons {
+      if case .text(let text) = button.key.action {
+        let value = interactionState.usesUppercaseLetters ? text.uppercased() : text.lowercased()
+        button.key = KeyboardLayoutKey(.text(value), width: button.key.width, style: button.key.style)
+        let options = interactionState.alternateCharacters(for: value)
+        if options.count > 1 { longPressOptions[ObjectIdentifier(button)] = options }
+      }
+      let value = presentation(for: button.key.action)
+      button.configure(title: value.title, systemImage: value.systemImage,
+                       accessibilityLabel: value.accessibilityLabel)
+      button.accessibilityIdentifier = value.accessibilityIdentifier
+    }
+  }
+
   private func rebuild() {
+
     resetTransientState()
     rootStack.spacing = traitCollection.horizontalSizeClass == .regular ? 8 : 11
+    keyButtons.removeAll()
     longPressOptions.removeAll()
     rootStack.arrangedSubviews.forEach {
       rootStack.removeArrangedSubview($0)
@@ -200,6 +233,7 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
 
   private func makeButton(for key: KeyboardLayoutKey) -> KeyboardKeyButton {
     let button = KeyboardKeyButton(key: key)
+    keyButtons.append(button)
     let presentation = presentation(for: key.action)
     button.configure(
       title: presentation.title,
@@ -377,14 +411,15 @@ final class KeyboardSurfaceView: UIView, UIGestureRecognizerDelegate {
   }
 
   private func insertText(_ text: String, consumesShift: Bool = true) {
+    // Consume one-shot Shift before notifying the host, which may synchronously
+    // send an updated capitalization context back to the keyboard.
+    if consumesShift {
+      let previous = interactionState.capitalization
+      interactionState.consumeText()
+      if previous != interactionState.capitalization { refreshLetterCase() }
+    }
     delegate?.keyboardSurfacePlayInputClick(self)
     delegate?.keyboardSurface(self, insertText: text)
-    guard consumesShift else { return }
-    let previous = interactionState.capitalization
-    interactionState.consumeText()
-    if previous != interactionState.capitalization {
-      rebuild()
-    }
   }
 
   private func presentation(

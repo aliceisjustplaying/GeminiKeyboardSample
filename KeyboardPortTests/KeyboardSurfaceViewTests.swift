@@ -3,6 +3,41 @@ import XCTest
 
 @MainActor
 final class KeyboardSurfaceViewTests: XCTestCase {
+  func testOverlappingKeyHandlersSurviveCapitalizationChange() throws {
+    let (surface, delegate) = makeSurface()
+    surface.applyAutomaticCapitalization(.shifted)
+    let first = try button("keyboard-key-Q", in: surface)
+    let second = try button("keyboard-key-W", in: surface)
+    XCTAssertFalse(first.isExclusiveTouch)
+    XCTAssertFalse(second.isExclusiveTouch)
+    // This suite is hostless: UIApplication does not dispatch sendActions.
+    // Invoke the registered handlers in overlapping down/down/up/up order.
+    func dispatch(_ key: KeyboardKeyButton, _ event: UIControl.Event) {
+      for target in key.allTargets {
+        for action in key.actions(forTarget: target, forControlEvent: event) ?? [] {
+          _ = (target as? NSObject)?.perform(NSSelectorFromString(action), with: key)
+        }
+      }
+    }
+    dispatch(first, .touchDown)
+    dispatch(second, .touchDown)
+    dispatch(first, .touchUpInside)
+    XCTAssertTrue(first === findButton("keyboard-key-q", in: surface))
+    XCTAssertTrue(second === findButton("keyboard-key-w", in: surface))
+    dispatch(second, .touchUpInside)
+    XCTAssertEqual(delegate.insertedText, ["Q", "w"])
+    surface.applyAutomaticCapitalization(.shifted)
+    XCTAssertTrue(second === findButton("keyboard-key-W", in: surface))
+  }
+
+  func testRowGapRoutesToExpandedKeyHitRegion() throws {
+    let (surface, _) = makeSurface()
+    let q = try button("keyboard-key-q", in: surface)
+    let frame = q.convert(q.bounds, to: surface)
+    let point = CGPoint(x: frame.midX, y: frame.maxY + 4)
+    XCTAssertTrue(surface.hitTest(point, with: nil) === q)
+  }
+
   func testPortraitKeyFramesMatchAppleReference() throws {
     // IMG_3350: 1206px wide at 3x scale. Reference key frames in points.
     let surface = KeyboardSurfaceView(frame: CGRect(x: 0, y: 0, width: 402, height: 205))

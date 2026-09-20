@@ -5,12 +5,13 @@ import UIKit
 // THIRD_PARTY_NOTICES.md.
 
 final class KeyboardKeyButton: UIButton {
-  let key: KeyboardLayoutKey
+  var key: KeyboardLayoutKey
 
   init(key: KeyboardLayoutKey) {
     self.key = key
     super.init(frame: .zero)
-    isExclusiveTouch = true
+    // Two-thumb typing overlaps touches on neighboring keys.
+    isExclusiveTouch = false
     accessibilityTraits.insert(.keyboardKey)
     layer.cornerCurve = .continuous
     layer.cornerRadius = 9
