@@ -1,30 +1,27 @@
 # Third-Party Notices
 
-## KeyboardKit 9.9.1
+## KeyboardKit 10.9.4
 
-The project-local keyboard layout and interaction engine under
-`KeyboardExtension/KeyboardKitPort` and `Shared/Keyboard` adapts concepts and
-selected implementation ideas from KeyboardKit 9.9.1.
+The app uses the free core of KeyboardKit as a binary Swift Package dependency.
+KeyboardKit owns the typing layout, key gestures and text-document interactions.
+The Gemini voice controls and local emoji picker are implemented in this project.
+No KeyboardKit Pro license is configured. The app does not include a working
+autocomplete or autocorrect service.
 
-KeyboardKit 9.9.1 is Copyright (c) 2016-2025 Daniel Saidi and is provided under
-the MIT License:
+KeyboardKit is Copyright (c) Kankoda Sweden AB and is distributed under its
+[closed-source license](https://github.com/KeyboardKit/KeyboardKit/blob/10.9.4/LICENSE).
+This repository's Apache license does not apply to that dependency.
 
-> Permission is hereby granted, free of charge, to any person obtaining a copy
-> of this software and associated documentation files (the "Software"), to deal
-> in the Software without restriction, including without limitation the rights
-> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-> copies of the Software, and to permit persons to whom the Software is
-> furnished to do so, subject to the following conditions:
->
-> The above copyright notice and this permission notice shall be included in all
-> copies or substantial portions of the Software.
->
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-> SOFTWARE.
+Source package: https://github.com/KeyboardKit/KeyboardKit/tree/10.9.4
 
-Source: https://github.com/KeyboardKit/KeyboardKit/tree/9.9.1
+## LicenseKit 2.2.4
+
+KeyboardKit depends on LicenseKit, which is resolved transitively by Swift Package
+Manager. Its license is separate from this repository's license:
+https://github.com/LicenseKit/LicenseKit/blob/2.2.4/LICENSE
+
+## Earlier versions
+
+Earlier commits contained a local keyboard adaptation based on MIT-licensed
+KeyboardKit 9.9.1. That implementation has been removed. Its attribution and
+license remain available in the Git history for those versions.

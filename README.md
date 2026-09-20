@@ -11,7 +11,7 @@ An end-to-end iOS sample for Gemini 3.5 Live transcription and spoken translatio
 - `gemini-3.5-live-translate-preview` translating speech while it is spoken.
 - A custom keyboard controlling microphone capture in its containing app through an App Group. Keyboard extensions cannot access the microphone themselves.
 - Safe Finish, Cancel, fallback, recovery, and insertion into the original text field.
-- A project-local typing surface adapted from KeyboardKit, with no runtime library dependency.
+- KeyboardKit 10.9.4 handles the typing surface and gestures, with Gemini voice controls above it. A small local emoji picker is included; no Pro license is configured.
 
 ## Custom vocabulary (this fork)
 
@@ -99,7 +99,16 @@ For the detailed state machine and safety invariants, see [`docs/ARCHITECTURE.md
    ./Scripts/test.sh
    ```
 
+   To test the keyboard UI independently on an iPhone simulator running iOS 18.5 or later:
+
+   ```sh
+   ./Scripts/test-keyboard.sh <simulator-UDID>
+   ```
+
+   This host tests key taps, the lowercase toggle, emoji insertion and recording-view transitions without recording audio or contacting Gemini. It does not test the app-to-extension recording handoff.
+
 5. Deploy to a paired iPhone:
+
 
    ```sh
    xcrun devicectl list devices
@@ -127,4 +136,4 @@ Production software should keep long-lived keys on a backend, proxy batch reques
 
 ## License
 
-Licensed under the [Apache License 2.0](LICENSE). The local typing surface includes MIT-licensed KeyboardKit adaptations documented in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+Licensed under the [Apache License 2.0](LICENSE). KeyboardKit and LicenseKit are separate binary dependencies with their own licenses, documented in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

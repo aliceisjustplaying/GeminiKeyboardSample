@@ -1,0 +1,50 @@
+name: KeyboardIntegrationCheck
+options:
+  deploymentTarget:
+    iOS: '18.5'
+packages:
+  KeyboardKit:
+    url: https://github.com/KeyboardKit/KeyboardKit.git
+    exactVersion: 10.9.4
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    CODE_SIGNING_ALLOWED: NO
+targets:
+  KeyboardIntegrationCheck:
+    type: application
+    platform: iOS
+    sources:
+      - Host.swift
+      - path: ../KeyboardExtension
+        excludes: ['Info.plist', '*.entitlements']
+      - ../Shared
+    dependencies:
+      - package: KeyboardKit
+    info:
+      path: build/Info.plist
+      properties:
+        CFBundleDisplayName: Keyboard Check
+        UILaunchScreen: {}
+        GeminiVoiceAppGroupIdentifier: group.com.example.KeyboardIntegrationCheck
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.KeyboardIntegrationCheck
+  IntegrationUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.KeyboardIntegrationCheck.Tests
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: KeyboardIntegrationCheck
+schemes:
+  KeyboardIntegrationCheck:
+    build:
+      targets:
+        KeyboardIntegrationCheck: all
+    test:
+      targets:
+        - IntegrationUITests

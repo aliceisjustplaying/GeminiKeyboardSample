@@ -4,59 +4,28 @@ import UIKit
 
 extension KeyboardViewController {
   func buildInterface() {
-    view.backgroundColor = Self.keyboardBackgroundColor
-
-    let height = view.heightAnchor.constraint(
-      equalToConstant: preferredKeyboardHeight
-    )
-    height.priority = .defaultHigh
-    height.isActive = true
-    keyboardHeightConstraint = height
-
+    guard rootStack.arrangedSubviews.isEmpty else { return }
     rootStack.axis = .vertical
     rootStack.alignment = .fill
     rootStack.spacing = 7
-    rootStack.translatesAutoresizingMaskIntoConstraints = false
-    view.addSubview(rootStack)
-
-    NSLayoutConstraint.activate([
-      rootStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-      rootStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-      rootStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 5),
-      rootStack.bottomAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0),
-    ])
-
+    rootStack.isLayoutMarginsRelativeArrangement = true
+    rootStack.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0)
     let toolbar = makeToolbar()
     makeRecordingPanel()
-
-    typingStack.axis = .vertical
-    typingStack.alignment = .fill
-    typingStack.translatesAutoresizingMaskIntoConstraints = false
-    keyboardSurface.translatesAutoresizingMaskIntoConstraints = false
-    typingStack.addArrangedSubview(keyboardSurface)
-
     rootStack.addArrangedSubview(toolbar)
     rootStack.addArrangedSubview(insertLatestButton)
     rootStack.addArrangedSubview(recordingPanel)
-    rootStack.addArrangedSubview(typingStack)
-
     toolbar.heightAnchor.constraint(equalToConstant: 40).isActive = true
     insertLatestButton.heightAnchor.constraint(equalToConstant: 42).isActive = true
     insertLatestButton.isHidden = true
     recordingPanel.isHidden = true
   }
 
-  var preferredKeyboardHeight: CGFloat {
-    let contentHeight: CGFloat = traitCollection.verticalSizeClass == .compact ? 216 : 257
-    let resultBannerHeight: CGFloat = insertLatestButton.isHidden ? 0 : 49
-    return contentHeight + resultBannerHeight + view.safeAreaInsets.bottom
-  }
-
   func updateKeyboardHeight() {
-    let height = preferredKeyboardHeight
-    guard keyboardHeightConstraint?.constant != height else { return }
-    keyboardHeightConstraint?.constant = height
+    let recording = mode == .recording
+    let height: CGFloat = 45 + (insertLatestButton.isHidden ? 0 : 49) + (recording ? 212 : 0)
+    if voicePresentation.controlsHeight != height { voicePresentation.controlsHeight = height }
+    if voicePresentation.isRecording != recording { voicePresentation.isRecording = recording }
   }
 
   func makeToolbar() -> UIView {

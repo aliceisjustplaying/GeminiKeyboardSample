@@ -1,8 +1,9 @@
 import CryptoKit
 import Darwin
 import UIKit
+import KeyboardKit
 
-final class KeyboardViewController: UIInputViewController, UIInputViewAudioFeedback {
+final class KeyboardViewController: KeyboardInputViewController {
   enum LocalKey {
     static let lowercaseDictation = "keyboard.lowercase-dictation"
     static let consumedResultSequence = "keyboard.consumed-result-sequence"
@@ -57,12 +58,10 @@ final class KeyboardViewController: UIInputViewController, UIInputViewAudioFeedb
   var keyboardSettleWorkItem: DispatchWorkItem?
 
   let rootStack = UIStackView()
-  let typingStack = UIStackView()
-  let keyboardSurface = KeyboardSurfaceView()
+  let voicePresentation = VoiceKeyboardPresentation()
   let recordingPanel = UIView()
   let waveformView = LiveWaveformView()
   let recordingTitleLabel = UILabel()
-  var keyboardHeightConstraint: NSLayoutConstraint?
   let brandMarkView = KeyboardBrandMarkView()
   let processingStatusStack = UIStackView()
   let processingIndicator = UIActivityIndicatorView(style: .medium)
@@ -74,7 +73,9 @@ final class KeyboardViewController: UIInputViewController, UIInputViewAudioFeedb
   let cancelButton = KeyboardButton(type: .system)
   let insertLatestButton = KeyboardButton(type: .system)
 
-  var enableInputClicksWhenVisible: Bool { true }
+  override func viewWillSetupKeyboardKit() { configureKeyboardKit() }
+
+  override func viewWillSetupKeyboardView() { configureKeyboardView() }
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -83,14 +84,6 @@ final class KeyboardViewController: UIInputViewController, UIInputViewAudioFeedb
       forKey: LocalKey.consumedResultSequence
     )
     restoreTrackedRequest()
-    keyboardSurface.delegate = self
-    buildInterface()
-  }
-
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    syncKeyboardSurfaceContext()
-    updateAutomaticCapitalization()
   }
 
   override func viewDidAppear(_ animated: Bool) {
@@ -118,18 +111,6 @@ final class KeyboardViewController: UIInputViewController, UIInputViewAudioFeedb
     processingIndicator.stopAnimating()
     pollingTimer?.invalidate()
     pollingTimer = nil
-    keyboardSurface.resetTransientState()
-  }
-
-  override func viewWillLayoutSubviews() {
-    super.viewWillLayoutSubviews()
-    syncKeyboardSurfaceContext()
-    updateKeyboardHeight()
-  }
-
-  override func viewSafeAreaInsetsDidChange() {
-    super.viewSafeAreaInsetsDidChange()
-    updateKeyboardHeight()
   }
 
   static let keyboardBackgroundColor = UIColor { traits in
@@ -144,8 +125,6 @@ final class KeyboardViewController: UIInputViewController, UIInputViewAudioFeedb
 
   override func textDidChange(_ textInput: UITextInput?) {
     super.textDidChange(textInput)
-    syncKeyboardSurfaceContext()
-    updateAutomaticCapitalization()
     // Host apps can replace the text proxy just after the keyboard appears.
     // Restart the short settle window so the insertion anchor is captured
     // from the final proxy rather than its transition placeholder.
@@ -176,46 +155,5 @@ final class KeyboardViewController: UIInputViewController, UIInputViewAudioFeedb
     }
     keyboardSettleWorkItem = workItem
     DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
-  }
-
-  func updateAutomaticCapitalization() {
-    let context = textDocumentProxy.documentContextBeforeInput ?? ""
-    let requested: KeyboardCapitalization
-
-    let capitalizationType = textDocumentProxy.autocapitalizationType ?? .sentences
-    switch capitalizationType {
-    case UITextAutocapitalizationType.none:
-      requested = .lowercase
-    case .allCharacters:
-      requested = .shifted
-    case .words:
-      let startsWord = context.last.map { $0.isWhitespace } ?? true
-      requested = startsWord ? .shifted : .lowercase
-    case .sentences:
-      let lastNonWhitespace = context.last { !$0.isWhitespace }
-      let startsSentence = lastNonWhitespace.map { ".!?\n".contains($0) } ?? true
-      requested = startsSentence ? .shifted : .lowercase
-    @unknown default:
-      requested = .lowercase
-    }
-
-    keyboardSurface.applyAutomaticCapitalization(requested)
-  }
-
-  func syncKeyboardSurfaceContext() {
-    let inputKind: KeyboardInputKind
-    switch textDocumentProxy.keyboardType {
-    case .emailAddress:
-      inputKind = .email
-    case .URL, .webSearch:
-      inputKind = .url
-    default:
-      inputKind = .standard
-    }
-    keyboardSurface.updateInputContext(
-      kind: inputKind,
-      returnKeyType: textDocumentProxy.returnKeyType ?? .default,
-      needsInputModeSwitchKey: needsInputModeSwitchKey
-    )
   }
 }

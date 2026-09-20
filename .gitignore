@@ -28,3 +28,6 @@ DEPLOYMENT.local.md
 *.dSYM
 *.dSYM.zip
 SourcePackages/
+
+# Generated standalone keyboard integration test project
+KeyboardIntegrationTests/KeyboardIntegrationCheck.xcodeproj/

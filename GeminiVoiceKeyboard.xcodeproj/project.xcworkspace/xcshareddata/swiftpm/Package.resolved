@@ -1,0 +1,24 @@
+{
+  "originHash" : "1707080cc681be7b9ce6d63ea936be5a22fe5a8dff4532f52aea002c594e3127",
+  "pins" : [
+    {
+      "identity" : "keyboardkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/KeyboardKit/KeyboardKit.git",
+      "state" : {
+        "revision" : "e12297db0f4e5a032c44075b30af761ef09bdacf",
+        "version" : "10.9.4"
+      }
+    },
+    {
+      "identity" : "licensekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LicenseKit/LicenseKit.git",
+      "state" : {
+        "revision" : "7a4b1097c920aae3053c307741497568e43a2f66",
+        "version" : "2.2.4"
+      }
+    }
+  ],
+  "version" : 3
+}

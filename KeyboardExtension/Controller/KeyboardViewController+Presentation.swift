@@ -107,7 +107,7 @@ extension KeyboardViewController {
   func updateRecordingPresentation(with snapshot: RelaySnapshot) {
     let isRecording = mode == .recording
     recordingPanel.isHidden = !isRecording
-    typingStack.isHidden = isRecording
+    updateKeyboardHeight()
 
     guard isRecording else {
       waveformView.setLevel(0, active: false)
