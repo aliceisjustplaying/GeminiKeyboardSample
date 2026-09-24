@@ -7,9 +7,18 @@ final class KeyboardTestTextView: UITextView {
 
 @main
 final class TestHost: UIResponder, UIApplicationDelegate {
+  func application(_ application: UIApplication, configurationForConnecting session: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    let configuration = UISceneConfiguration(name: nil, sessionRole: session.role)
+    configuration.delegateClass = TestScene.self
+    return configuration
+  }
+}
+
+final class TestScene: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
-  func application(_ application: UIApplication, didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    let window = UIWindow(frame: UIScreen.main.bounds)
+  func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options: UIScene.ConnectionOptions) {
+    guard let scene = scene as? UIWindowScene else { return }
+    let window = UIWindow(windowScene: scene)
     let root = UIViewController()
     let editor = KeyboardTestTextView()
     editor.accessibilityIdentifier = "keyboard-test-editor"
@@ -52,6 +61,5 @@ final class TestHost: UIResponder, UIApplicationDelegate {
     window.makeKeyAndVisible()
     self.window = window
     editor.becomeFirstResponder()
-    return true
   }
 }

@@ -1,5 +1,24 @@
 import XCTest
 final class IntegrationTests: XCTestCase {
+  func testSpaceAfterWordAndShortDrags() {
+    let app = XCUIApplication()
+    app.launch()
+    XCTAssertTrue(app.keys["D"].waitForExistence(timeout: 10))
+    app.keys["D"].tap()
+    for letter in ["o", "i", "n", "g"] { app.keys[letter].tap() }
+    let editor = app.textViews["keyboard-test-editor"]
+    let space = app.keys["space"]
+    space.tap()
+    XCTAssertEqual(editor.value as? String, "Doing ")
+    app.keys["a"].tap()
+    let start = space.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+    start.press(forDuration: 0.01, thenDragTo: start.withOffset(CGVector(dx: 12, dy: -8)), withVelocity: .fast, thenHoldForDuration: 0)
+    XCTAssertEqual(editor.value as? String, "Doing a ")
+    app.keys["b"].tap()
+    space.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12)).tap()
+    XCTAssertEqual(editor.value as? String, "Doing a b ")
+  }
+
   func testKeyboardTypingAndVoiceControls() {
     let app = XCUIApplication()
     app.launch()

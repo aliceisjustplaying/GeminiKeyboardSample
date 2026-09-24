@@ -26,6 +26,9 @@ targets:
       properties:
         CFBundleDisplayName: Keyboard Check
         UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+          UISceneConfigurations: {}
         GeminiVoiceAppGroupIdentifier: group.com.example.KeyboardIntegrationCheck
     settings:
       base:
