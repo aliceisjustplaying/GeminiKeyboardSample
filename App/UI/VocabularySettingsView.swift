@@ -14,7 +14,7 @@ struct VocabularySettingsView: View {
       isEditing = true
     } label: {
       HStack(spacing: 12) {
-        Image(systemName: "text.book.closed").foregroundStyle(.cyan)
+        Image(systemName: "text.book.closed").foregroundStyle(.blue)
         VStack(alignment: .leading, spacing: 4) {
           Text("Custom vocabulary").font(.headline)
           Text("\(configuration.customVocabulary.count) terms · Names, acronyms and phrases")
@@ -23,9 +23,9 @@ struct VocabularySettingsView: View {
         Spacer()
         Image(systemName: "chevron.right").foregroundStyle(.secondary)
       }
-      .foregroundStyle(.white)
-      .padding(18)
-      .background(Color.white.opacity(0.07))
+      .foregroundStyle(.primary)
+      .padding(.vertical, 4)
+      .background(Color(uiColor: .secondarySystemGroupedBackground))
       .clipShape(RoundedRectangle(cornerRadius: 18))
     }
     .buttonStyle(.plain)
@@ -42,7 +42,7 @@ struct VocabularySettingsView: View {
             .autocorrectionDisabled()
             .padding(8)
             .scrollContentBackground(.hidden)
-            .background(Color.white.opacity(0.07))
+            .background(Color(uiColor: .secondarySystemGroupedBackground))
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .accessibilityLabel("Custom vocabulary, one term per line")
             .accessibilityIdentifier("custom-vocabulary-editor")
@@ -74,7 +74,6 @@ struct VocabularySettingsView: View {
           }
         }
       }
-      .preferredColorScheme(.dark)
       .interactiveDismissDisabled()
     }
   }

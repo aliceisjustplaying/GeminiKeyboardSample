@@ -7,6 +7,7 @@ final class AppConfiguration: ObservableObject {
     static let customVocabulary = "configuration.custom-vocabulary"
     static let apiKeyOverride = "configuration.gemini-api-key-override"
     static let translationTargetCode = TranslationPreferenceKey.targetCode
+    static let historyRetentionDays = "configuration.history-retention-days"
   }
 
   private let defaults: UserDefaults
@@ -29,6 +30,7 @@ final class AppConfiguration: ObservableObject {
       // The keyboard and Live Activity never need the API key. Remove
       // any legacy App Group copy after migrating to Keychain.
       sharedDefaults.removeObject(forKey: Key.apiKeyOverride)
+      publishCredentialAvailability()
       sharedDefaults.synchronize()
     }
   }
@@ -44,6 +46,15 @@ final class AppConfiguration: ObservableObject {
     customVocabulary = terms
     defaults.set(terms, forKey: Key.customVocabulary)
     return true
+  }
+
+  /// Zero keeps completed text until the user deletes it.
+  var historyRetentionLabel: String { historyRetentionDays == 0 ? "Forever" : "\(historyRetentionDays) days" }
+
+  @Published var historyRetentionDays: Int {
+    didSet {
+      defaults.set(historyRetentionDays, forKey: Key.historyRetentionDays)
+    }
   }
 
   @Published var translationTargetCode: String {
@@ -68,8 +79,17 @@ final class AppConfiguration: ObservableObject {
     self.customVocabulary = defaults.stringArray(forKey: Key.customVocabulary) ?? []
     self.sharedDefaults = sharedDefaults
     self.credentialStore = credentialStore
-    self.embeddedAPIKey =
+    let savedRetention = defaults.integer(forKey: Key.historyRetentionDays)
+    self.historyRetentionDays = max(0, savedRetention)
+    let configuredEmbeddedAPIKey =
       (bundle.object(forInfoDictionaryKey: "GeminiDefaultAPIKey") as? String) ?? ""
+    #if DEBUG
+      let forceMissingAPIKey =
+        ProcessInfo.processInfo.environment["GEMINI_VOICE_FORCE_MISSING_API_KEY"] == "1"
+      self.embeddedAPIKey = forceMissingAPIKey ? "" : configuredEmbeddedAPIKey
+    #else
+      self.embeddedAPIKey = configuredEmbeddedAPIKey
+    #endif
     self.embeddedTranscriptionModel = Self.nonEmptyBundleString(
       bundle,
       key: "GeminiDefaultTranscriptionModel",
@@ -85,8 +105,20 @@ final class AppConfiguration: ObservableObject {
       key: "GeminiDefaultTranslationModel",
       fallback: "gemini-3.5-flash"
     )
-    let legacyOverride = defaults.string(forKey: Key.apiKeyOverride) ?? ""
-    let securedOverride = credentialStore.loadAPIKey()
+    let legacyOverride: String
+    let securedOverride: String
+    #if DEBUG
+      if forceMissingAPIKey {
+        legacyOverride = ""
+        securedOverride = ""
+      } else {
+        legacyOverride = defaults.string(forKey: Key.apiKeyOverride) ?? ""
+        securedOverride = credentialStore.loadAPIKey()
+      }
+    #else
+      legacyOverride = defaults.string(forKey: Key.apiKeyOverride) ?? ""
+      securedOverride = credentialStore.loadAPIKey()
+    #endif
     self.apiKeyOverride = securedOverride.isEmpty ? legacyOverride : securedOverride
     self.credentialPersistenceWarning = nil
     let savedTargetCode =
@@ -106,6 +138,7 @@ final class AppConfiguration: ObservableObject {
       defaults.removeObject(forKey: Key.apiKeyOverride)
     }
     sharedDefaults.set(self.translationTargetCode, forKey: Key.translationTargetCode)
+    publishCredentialAvailability()
     sharedDefaults.synchronize()
   }
 
@@ -139,10 +172,7 @@ final class AppConfiguration: ObservableObject {
   }
 
   var hasUsableAPIKey: Bool {
-    let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
-    return !key.isEmpty
-      && key != "YOUR_GEMINI_API_KEY"
-      && key != "__GEMINI_API_KEY__"
+    GeminiCredentialAvailability.isUsable(apiKey)
   }
 
   var embeddedKeyDescription: String {
@@ -158,6 +188,13 @@ final class AppConfiguration: ObservableObject {
 
   func clearAPIKeyOverride() {
     apiKeyOverride = ""
+  }
+
+  private func publishCredentialAvailability() {
+    sharedDefaults.set(
+      hasUsableAPIKey,
+      forKey: GeminiCredentialAvailability.sharedDefaultsKey
+    )
   }
 
   private static func nonEmptyBundleString(

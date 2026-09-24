@@ -15,6 +15,9 @@ extension RelayController {
   }
 
   func cancelDictation(message: String? = nil) {
+    if activeDictationAction == .note {
+      failNoteCapture("Recording cancelled. No note was saved.")
+    }
     cancelAutomaticReturnToKeyboard()
     pendingAudioRecoveryError = nil
     maximumDurationWorkItem?.cancel()
@@ -91,6 +94,7 @@ extension RelayController {
 
     let segment: CapturedAudioSegment
     let action = activeDictationAction ?? .transcribe
+    if action == .note { noteCapturePhase = .processing }
     let liveSession = liveRequestID == requestID ? activeLiveSession : nil
     let connectionTask = liveRequestID == requestID ? liveConnectionTask : nil
     do {
@@ -220,12 +224,7 @@ extension RelayController {
           return
         }
 
-        try addToHistory(outputText)
-        store.publishTranscript(
-          outputText,
-          requestID: requestID,
-          kind: .dictation
-        )
+        try completeTranscription(outputText, requestID: requestID, action: action)
         do {
           try recoveryStore.remove(id: recoverableRecording.id)
         } catch {
@@ -243,7 +242,9 @@ extension RelayController {
           return
         }
         let completionMessage: String
-        if usedLiveStream {
+        if action == .note {
+          completionMessage = "Note saved in History"
+        } else if usedLiveStream {
           completionMessage =
             action == .translate
             ? "Live translation inserted — ready"
@@ -269,6 +270,9 @@ extension RelayController {
           message: error.localizedDescription
         )
         refreshRecoverableRecordings()
+        if action == .note {
+          failNoteCapture("\(error.localizedDescription)\nYour recording is saved in History so you can retry.")
+        }
         guard generation == transcriptionGeneration, isRelayRunning else { return }
         if applyPendingAudioRecoveryFailureIfNeeded() {
           return
@@ -339,6 +343,8 @@ extension RelayController {
     let cleaned = TranscriptFormatter.cleaned(text)
     guard !cleaned.isEmpty else { return }
     lastLivePreviewAt = now
+
+    if action == .note { notePreviewText = cleaned }
 
     let preview = String(cleaned.prefix(100))
     let label = action == .translate ? "Live translation" : "Live transcript"

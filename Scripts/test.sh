@@ -12,9 +12,13 @@ else
   echo "XcodeGen not found; using the committed Xcode project."
 fi
 
-device_id="$(xcrun simctl list devices available | sed -nE 's/^[[:space:]]*iPhone[^\(]*\(([A-F0-9-]+)\) \((Booted|Shutdown)\).*$/\1/p' | head -n 1)"
+device_id="$(xcrun simctl list devices available --json | ruby -rjson -e '
+devices = JSON.parse(STDIN.read).fetch("devices").select { |runtime, _| runtime.include?("iOS-27-") }.values.flatten.select { |device| device["name"].start_with?("iPhone") }
+devices.sort_by! { |device| device["state"] == "Booted" ? 0 : 1 }
+puts devices.first&.fetch("udid", "")
+')"
 if [[ -z "$device_id" ]]; then
-  echo "No available iPhone simulator was found."
+  echo "No available iOS 27 iPhone simulator was found."
   exit 1
 fi
 

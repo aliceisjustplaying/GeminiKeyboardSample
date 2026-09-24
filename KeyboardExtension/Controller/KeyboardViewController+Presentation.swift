@@ -38,6 +38,37 @@ extension KeyboardViewController {
     true
   }
 
+  var keyboardHasUsableAPIKey: Bool {
+    sharedPreferences.bool(
+      forKey: GeminiCredentialAvailability.sharedDefaultsKey
+    )
+  }
+
+  func presentMissingCredential() {
+    let message = GeminiCredentialAvailability.keyboardMessage
+    setStatus(message, color: .systemOrange)
+    configureMicrophone(title: "Dictate", image: "key.slash", color: .systemGray)
+    configureTranslationButton(image: "key.slash", color: .systemGray)
+    microphoneButton.isEnabled = false
+    translateButton.isEnabled = false
+    cancelButton.isEnabled = false
+    timerLabel.isHidden = true
+    recordingPanel.isHidden = true
+    updateKeyboardHeight()
+    waveformView.setLevel(0, active: false)
+
+    processingIndicator.stopAnimating()
+    processingLabel.text = message
+    processingLabel.textColor = .systemOrange
+    processingStatusStack.accessibilityLabel = message
+    processingStatusStack.isHidden = false
+
+    microphoneButton.accessibilityLabel = "Gemini API key required"
+    microphoneButton.accessibilityHint = message
+    translateButton.accessibilityLabel = "Gemini API key required"
+    translateButton.accessibilityHint = message
+  }
+
   var keyboardTranslationTarget: TranslationLanguage {
     let code =
       sharedPreferences.string(forKey: TranslationPreferenceKey.targetCode)
@@ -47,8 +78,8 @@ extension KeyboardViewController {
 
   func configureTranslationButton(
     title: String? = nil,
-    image: String = "character.bubble.fill",
-    color: UIColor = .systemIndigo
+    image: String = "translate",
+    color: UIColor = .systemBlue
   ) {
     let target = keyboardTranslationTarget
     var configuration = translateButton.configuration
@@ -138,7 +169,7 @@ extension KeyboardViewController {
       processingLabel.textColor = Self.keyForegroundColor
       processingStatusStack.accessibilityLabel = label
       processingStatusStack.isHidden = false
-      processingIndicator.color = .systemCyan
+      processingIndicator.color = .systemBlue
       processingIndicator.startAnimating()
       return
     }
@@ -159,6 +190,17 @@ extension KeyboardViewController {
   }
 
   func setStatus(_ text: String, color: UIColor) {
-    brandMarkView.setStatus(text, accentColor: color)
+    let isPaused = text.hasPrefix("Relay offline") || text.hasPrefix("Relay paused")
+    brandMarkView.setStatus(text, accentColor: isPaused ? .systemBlue : color)
+    // The brand mark carries the full accessible status. Keep actionable
+    // setup and handoff problems visible too, without crowding the idle toolbar.
+    if color == .systemOrange {
+      processingIndicator.stopAnimating()
+      processingLabel.text = isPaused ? "Tap to dictate"
+        : text.hasPrefix("Enable Allow Full Access") ? "Enable Full Access" : text
+      processingLabel.textColor = isPaused ? .secondaryLabel : .systemOrange
+      processingStatusStack.accessibilityLabel = text
+      processingStatusStack.isHidden = false
+    }
   }
 }

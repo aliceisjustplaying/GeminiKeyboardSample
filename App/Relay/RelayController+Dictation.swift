@@ -5,6 +5,8 @@ import UIKit
 
 extension RelayController {
   func beginDictationFromKeyboardCommand(_ envelope: RelayCommandEnvelope) {
+    guard envelope.dictationAction != .note, noteStartupID == nil else { return }
+    if !noteCapturePhase.isBusy { isNoteCapturePresented = false }
     let storedPendingLaunch = store.pendingLaunchRequest()
     switch RelayStartAuthorizationPolicy.resolve(
       command: envelope,
@@ -44,6 +46,13 @@ extension RelayController {
     requestID: String,
     action: RelayDictationAction
   ) {
+    guard configuration.hasUsableAPIKey else {
+      publishUnavailable(
+        message: GeminiCredentialAvailability.appMessage,
+        offlineReason: .missingAPIKey
+      )
+      return
+    }
     guard status != .transcribing, activeRequestID == nil else { return }
     markRelayActivityAndSuspendIdleShutdown()
 
@@ -94,8 +103,9 @@ extension RelayController {
       activeDictationAction = action
       activeStartedAt = startedAt
       let listeningMessage: String
-      listeningMessage =
-        action == .translate
+      listeningMessage = action == .note
+        ? "Recording a note…"
+        : action == .translate
         ? "Streaming live translation… tap again when finished"
         : "Streaming live transcription… tap the microphone again when finished"
       publish(
